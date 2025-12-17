@@ -1,0 +1,4 @@
+package org.example.springmanager2.Entity.Annotations;
+
+public class ComplexIntIdGenerator {
+}
