@@ -7,7 +7,7 @@ import java.lang.annotation.ElementType;
 
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ComplexId {
+public @interface ComplexIntId {
     // Optional: prefix or pattern
     int start() default 1000;
 }

@@ -1,4 +1,10 @@
 package org.example.springmanager2.Repository;
 
-public interface AdminRepo {
+import org.example.springmanager2.Entity.Admin;
+import org.springframework.stereotype.Repository;
+
+@Repository
+public interface AdminRepo extends CommonRepository<Admin ,Integer>
+{
+
 }
