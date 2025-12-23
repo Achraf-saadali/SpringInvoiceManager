@@ -7,7 +7,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ComptableRepo extends CommonRepository<Comptable,Integer> {
 
-    public  Comptable findByUserEmailAndUserPasswordAndComptableCode( String userEmail,String userPassword,String ComptableCode);
+    public  Comptable findByUserEmailAndUserPasswordAndComptableCode
+            ( String userEmail,String userPassword,String ComptableCode);
 
-
+    public Comptable findByComptableCode(String comptableCode);
+    public void deleteByComptableCode(String comptableCode);
 }

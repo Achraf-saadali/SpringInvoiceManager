@@ -24,10 +24,13 @@ public class Comptable extends Personne {
     @Column(name="user_role")
     @Enumerated(EnumType.STRING)
     private  ROLES userRole = ROLES.COMPTABLE  ;
+
     @Column(name="comptable_code")
     private String comptableCode ;
+
+
     public String toString(){
-        return super.toString() +"\n"+
+        return   super.toString() +"\n"+
                 "comptableClient == "+comptableCode +"\n"+
                 "userRole == "+userRole+"\n";
 
@@ -40,10 +43,16 @@ public class Comptable extends Personne {
                 ROLES.COMPTABLE
         );
     }
+
+
         @Override
         public Object getCredentials()
         {
-            return new ExtraCredentials(this.getUserPassword(),this.getComptableCode(),ROLES.COMPTABLE);
+            return new ExtraCredentials
+                    (this.getUserPassword(),
+                            this.getComptableCode(),
+                            ROLES.COMPTABLE
+                    );
 
 
 

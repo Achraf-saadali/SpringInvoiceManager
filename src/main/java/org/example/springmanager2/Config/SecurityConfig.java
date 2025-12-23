@@ -34,11 +34,15 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        System.out.println("i am in security filter chain");
         http
                 .csrf(csrf->csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/login/**").permitAll()
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/comptable/**").not().hasAuthority("CLIENT")
+                        .requestMatchers("/client/**").hasAnyAuthority("ADMIN" ,"CLIENT","COMPTABLE")
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

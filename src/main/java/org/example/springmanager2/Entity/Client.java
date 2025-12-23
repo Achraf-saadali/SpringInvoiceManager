@@ -24,6 +24,8 @@ public class Client extends Personne {
     @Column(name="user_role")
     @Enumerated(EnumType.STRING)
     private  ROLES userRole = ROLES.CLIENT  ;
+
+
     @Column(name="client_code")
     private String clientCode ;
 
@@ -31,12 +33,17 @@ public class Client extends Personne {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return EnumSet.of(
 
-                ROLES.CLIENT);
+                ROLES.CLIENT
+                         );
     }
         @Override
         public Object getCredentials()
         {
-            return new ExtraCredentials(this.getUserPassword(),this.getClientCode(),ROLES.CLIENT);
+            return new ExtraCredentials
+                    (this.getUserPassword(),
+                            this.getClientCode(),
+                            ROLES.CLIENT
+                    );
 
 
 

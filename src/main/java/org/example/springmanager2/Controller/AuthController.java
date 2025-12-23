@@ -30,7 +30,9 @@ public class AuthController {
 
 
 
-    public AuthController(RolesRouter rolesRouter, AuthenticationManager authenticationManager, JwtUtil jwtUtil)
+    public AuthController(RolesRouter rolesRouter,
+                          AuthenticationManager authenticationManager,
+                          JwtUtil jwtUtil)
     {
 
         this.jwtUtil = jwtUtil ;
@@ -44,10 +46,15 @@ public class AuthController {
 
         System.out.println("our admin is =="+admin );
 
-        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(admin.getUserEmail(),admin.getUserPassword() ) );
+        authenticationManager.authenticate
+                (new UsernamePasswordAuthenticationToken
+                        (admin.getUserEmail(),admin.getUserPassword() )
+                 );
 
         // If authentication succeeds → generate JWT
-        String token = jwtUtil.generateToken(admin.getUserEmail(), ROLES.ADMIN);
+        String token = jwtUtil.generateToken
+                (admin.getUserEmail(), ROLES.ADMIN
+                );
         return ResponseEntity.ok(new AuthResponse(token,ROLES.ADMIN));
 
 
@@ -56,14 +63,21 @@ public class AuthController {
     @PostMapping("/client")
     public ResponseEntity<?> loginClient(@RequestBody Client client )
     {
-       ExtraCredentials clientpasswords = new ExtraCredentials(client.getPassword(),client.getClientCode(),ROLES.CLIENT);
+       ExtraCredentials clientpasswords
+               = new ExtraCredentials
+               (client.getPassword(),
+                       client.getClientCode(),
+                       ROLES.CLIENT
+                 );
 
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(client.getUserEmail(),clientpasswords )
+                new UsernamePasswordAuthenticationToken
+                        (client.getUserEmail(),clientpasswords )
         );
 
 
-        String token = jwtUtil.generateToken(client.getUserEmail(),ROLES.CLIENT);
+        String token = jwtUtil.generateToken
+                (client.getUserEmail(),ROLES.CLIENT);
         return ResponseEntity.ok(new AuthResponse(token,ROLES.CLIENT));
 
 
@@ -80,19 +94,29 @@ public class AuthController {
 
 
     @PostMapping("/comptable")
-    public ResponseEntity<?> loginComptable(@RequestBody Comptable comptable )
+    public ResponseEntity<?> loginComptable
+            (@RequestBody Comptable comptable )
     {
 
 
 
-        ExtraCredentials comptablepasswords = new ExtraCredentials(comptable.getPassword(),comptable.getComptableCode(),ROLES.COMPTABLE);
+        ExtraCredentials comptablepasswords
+                = new ExtraCredentials
+                (comptable.getPassword(),
+                        comptable.getComptableCode(),
+                        ROLES.COMPTABLE);
 
         authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(comptable.getUserEmail(),comptablepasswords )
+                new UsernamePasswordAuthenticationToken
+                        (comptable.getUserEmail(),
+                                comptablepasswords )
         );
 
         // If authentication succeeds → generate JWT
-        String token = jwtUtil.generateToken(comptable.getUserEmail(),ROLES.COMPTABLE);
+        String token = jwtUtil.generateToken
+                (comptable.getUserEmail(),
+                        ROLES.COMPTABLE
+                );
         return ResponseEntity.ok(new AuthResponse(token,ROLES.COMPTABLE));
     }
 
@@ -102,12 +126,12 @@ public class AuthController {
 class AuthResponse {
 
         private String token ;
-        private ROLES role ;
+        private ROLES userRole ;
 
         public AuthResponse(String token, ROLES role)
         {
             this.token = token ;
-            this.role =role;
+            userRole =role;
         }
 }
 

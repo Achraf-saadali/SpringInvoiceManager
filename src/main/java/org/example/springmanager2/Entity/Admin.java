@@ -28,24 +28,31 @@ public class Admin extends Personne {
     @Enumerated(EnumType.STRING)
     private  ROLES userRole = ROLES.ADMIN ;
 
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()
     {
         return EnumSet.of(ROLES.ADMIN);
     }
 
+
     public Object getCredentials()
     {
             return this.getUserPassword() ;
     }
+
+
+
     @Override
     public String toString()
     {
         return "UserName =="+getUserName() +"\n"+
                 " UserEmail =="+getUsername() +"\n"+
-                " UserPassword =="+getPassword();
+                " UserPassword =="+getPassword()+"\n"+
+                " UserRole == "+getUserRole();
 
     }
+
 
 
     }

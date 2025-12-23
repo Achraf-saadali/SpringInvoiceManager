@@ -1,5 +1,7 @@
 package org.example.springmanager2.Entity;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonSubTypes;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import org.example.springmanager2.Entity.Annotations.ComplexIntId;
 import jakarta.persistence.*;
 import lombok.* ;
@@ -19,11 +21,19 @@ import java.util.Set;
 @Getter
 @Setter
 @MappedSuperclass
+@ToString
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "userRole")
+@JsonSubTypes({
+        @JsonSubTypes.Type(value = Client.class, name = "CLIENT"),
+        @JsonSubTypes.Type(value = Comptable.class, name = "COMPTABLE"),
+        @JsonSubTypes.Type(value = Admin.class , name = "ADMIN")
+})
 public  class Personne  implements UserDetails {
     @Id
     @GeneratedValue(generator = "complex-int-id")
     @ComplexIntId(start = 1000)
-    @GenericGenerator(name = "complex-int-id", strategy = "org.example.springmanager2.Entity.Annotations.ComplexIntIdGenerator")
+    @GenericGenerator(name = "complex-int-id"
+                , strategy = "org.example.springmanager2.Entity.Annotations.ComplexIntIdGenerator")
 
     @Column(name = "user_id")
 
@@ -49,6 +59,7 @@ public  class Personne  implements UserDetails {
     {
         return userEmail ;
     }
+
     public String getUserName()
     {
         return userName;
@@ -77,12 +88,14 @@ public  class Personne  implements UserDetails {
     {
         return true;
     }
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities()
     {
         return null;
 
     }
+
     public Object getCredentials()
     {
         return userPassword ;

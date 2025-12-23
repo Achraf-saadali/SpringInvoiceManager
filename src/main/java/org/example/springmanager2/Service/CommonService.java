@@ -6,6 +6,7 @@ import org.example.springmanager2.Entity.Personne;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,7 +21,8 @@ public interface CommonService  extends UserDetailsService
 
 
 
-        public Authentication authentication(Authentication auth)  throws AuthenticationCredentialsNotFoundException;
+        public Authentication authentication(Authentication auth)
+                throws AuthenticationException;
 
         default  List<String> checkCredentialsExchange(Personne person1 , Personne person2)
         {      if (person1 == null) throw new IllegalArgumentException("person1 cannot be null");
@@ -48,7 +50,12 @@ public interface CommonService  extends UserDetailsService
 
         public  void delete(Personne person) ;
 
-        public  void modify(Personne fromPerson , Personne toPerson) ;
+        public  void modify(Personne person) ;
+
+
+        public  List<?extends Personne> getAll();
+
+
 
 
 

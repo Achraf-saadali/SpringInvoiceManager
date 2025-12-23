@@ -41,6 +41,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     public JwtAuthenticationFilter(JwtUtil jwtUtil,
                                    RolesRouter rolesRouter) {
+        System.out.println("JwtAuthenticationFilter" +
+                " constructor called. rolesRouter = " + rolesRouter);
+
 
         this.jwtUtil = jwtUtil;
         this.rolesRouter = rolesRouter ;
@@ -51,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     HttpServletResponse response,
                                     FilterChain filterChain)
             throws ServletException, IOException {
-
+        System.out.println("i am in  filter internal");
         // Skip JWT check for login and public endpoints
         String path = request.getServletPath();
         if (path.startsWith("/auth/login")) {
@@ -60,6 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String authHeader = request.getHeader("Authorization");
+        System.out.println("header is == "+authHeader);
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
 
             String token = authHeader.substring(7);
@@ -67,9 +71,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             ROLES role = jwtUtil.extractRole(token);
             Personne userDetails = null;
             Object credentials = null;
-
+            System.out.println("email is == "+userEmail);
             if (userEmail != null &&
-                    SecurityContextHolder.getContext().getAuthentication() == null &&
+                    SecurityContextHolder.getContext().getAuthentication()
+                            == null &&
                     jwtUtil.isTokenValid(token)) {
 
                 userDetails = (Personne) rolesRouter.load(role, userEmail);

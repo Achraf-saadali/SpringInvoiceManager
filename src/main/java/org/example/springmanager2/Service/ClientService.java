@@ -6,6 +6,7 @@ import org.example.springmanager2.Entity.Client;
 import org.example.springmanager2.Entity.Comptable;
 import org.example.springmanager2.Entity.Enums.ROLES;
 import org.example.springmanager2.Entity.Personne;
+import org.example.springmanager2.Exception.WrongCredentialsException;
 import org.example.springmanager2.Repository.ClientRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
@@ -13,6 +14,7 @@ import org.springframework.security.authentication.AuthenticationCredentialsNotF
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -28,7 +30,8 @@ public class ClientService implements CommonService  {
     private final ClientRepo clientRepo;
 
      @Autowired
-     public ClientService(ClientRepo clientRepo,@Lazy BCryptPasswordEncoder encoder) {
+     public ClientService(ClientRepo clientRepo
+             ,@Lazy BCryptPasswordEncoder encoder) {
         this.encoder = encoder ;
 
         this.clientRepo = clientRepo;
@@ -50,44 +53,49 @@ public class ClientService implements CommonService  {
     }
     @Override
     public void create(Personne client) {
+        System.out.println("i am creating a client....");
         Client client2 = (Client) client ;
         client2.setUserPassword(encoder.encode(client2.getUserPassword()));
         clientRepo.save(client2);
     }
     @Override
-    public void delete(Personne client) {
+    public void delete(Personne P) {
 
-        clientRepo.deleteById(client.getUserId());
-        System.out.println("client " + client + "was deleted !!!");
+         Client client = (Client) P ;
+        clientRepo.deleteByClientCode(client.getClientCode());
+        System.out.println("deletion was succesfull");
     }
     @Override
-    public  void modify(Personne fromPerson , Personne toPerson)  {
-        Client toClient = (Client)  toPerson ;
-        Client fromClient = (Client) fromPerson ;
-        if (toClient == null) {
-            System.out.println("Client is Empty !!");
-            return;
-        }
-        List<String> arr = checkCredentialsExchange(fromClient, toClient);
+    public  void modify(Personne person )  {
 
-        fromClient.setUserPassword(encoder.encode(arr.getLast()));
-        fromClient.setUserEmail(arr.getFirst());
-        fromClient.setUserName(arr.get(1));
+         Client client = clientRepo.findByClientCode(
+                 ((Client) person).getClientCode()
+         );
 
-
-         clientRepo.save(fromClient);
+         clientRepo.save(client);
 
 
     }
 
     @Override
-    public Authentication authentication(Authentication auth) throws AuthenticationCredentialsNotFoundException {
+    public Authentication authentication(Authentication auth)  throws AuthenticationException {
         String userEmail = auth.getName();
         Client client = (Client) loadUserByUsername(userEmail);
+        if (client == null)
+            throw new WrongCredentialsException("Client Not found");
 
         ExtraCredentials extraCredentials = (ExtraCredentials) auth.getCredentials();
-        if (!(extraCredentials.equals(new ExtraCredentials(client.getUserPassword(), client.getClientCode(),ROLES.CLIENT), encoder)))
-            throw new BadCredentialsException("password errors");
+        if (
+                !(extraCredentials.equals(
+                        new ExtraCredentials(
+                                client.getUserPassword()
+                                , client.getClientCode()
+                                ,ROLES.CLIENT
+                        )
+                        , encoder)
+                )
+        )
+             throw new WrongCredentialsException("Wrong Credentials");
 
         return new UsernamePasswordAuthenticationToken
                 (
@@ -97,6 +105,10 @@ public class ClientService implements CommonService  {
                 );
 
 
+    }
+    public List<Client> getAll()
+    {
+        return clientRepo.findAll();
     }
 
 }
